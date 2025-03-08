@@ -1,5 +1,5 @@
 """
-Course: CSE 251 
+Course: CSE 251
 Lesson: L09 Prove Part 1
 File:   prove_part_1.py
 Author: <Add name here>
@@ -14,6 +14,9 @@ Instructions:
 """
 
 import math
+
+from Cython.Compiler.Tests.Utils import restore_Options
+
 from screen import Screen
 from maze import Maze
 import cv2
@@ -31,14 +34,39 @@ speed = SLOW_SPEED
 # TODO: Add any functions needed here.
 
 def solve_path(maze):
-    """ Solve the maze and return the path found between the start and end positions.  
+    """ Solve the maze and return the path found between the start and end positions.
         The path is a list of positions, (x, y) """
+    # TODO: Solve the maze recursively while tracking the correct path
     path = []
-    # TODO: Solve the maze recursively while tracking the correct path.
+    return maze_recersion(maze, path, maze.start_pos.x, maze.start_pos.y)
 
     # Hint: You can create an inner function to do the recursion
 
-    return path
+
+def maze_recersion(maze, path, x, y):
+
+    curr_x = x
+    curr_y = y
+
+    if len(path) < 1:
+        (curr_x, curr_y) = maze.get_start_pos()
+        pass
+    else:
+        path.append((curr_x, curr_y))
+
+    if maze.at_end(curr_x, curr_y):
+        return path
+
+    moves = maze.get_possible_moves(curr_x, curr_y)
+    if len(moves) == 0:
+        maze.restore(curr_x, curr_y)
+        return None
+
+    for m in moves:
+        output = maze_recersion(maze, path, m[0], m[1])
+        if output is not None:
+            return output
+
 
 
 def get_path(log, filename):
@@ -58,7 +86,7 @@ def get_path(log, filename):
 
     done = False
     while not done:
-        if screen.play_commands(speed): 
+        if screen.play_commands(speed):
             key = cv2.waitKey(0)
             if key == ord('1'):
                 speed = SLOW_SPEED
