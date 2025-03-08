@@ -28,7 +28,7 @@ from cse251 import *
 SCREEN_SIZE = 800
 COLOR = (0, 0, 255)
 SLOW_SPEED = 100
-FAST_SPEED = 1
+FAST_SPEED = 2
 speed = SLOW_SPEED
 
 # TODO: Add any functions needed here.
@@ -38,34 +38,33 @@ def solve_path(maze):
         The path is a list of positions, (x, y) """
     # TODO: Solve the maze recursively while tracking the correct path
     path = []
-    return maze_recersion(maze, path, maze.start_pos.x, maze.start_pos.y)
+
+    (x, y) = maze.get_start_pos()
+    return maze_recersion(maze, path, x, y)
 
     # Hint: You can create an inner function to do the recursion
 
 
 def maze_recersion(maze, path, x, y):
 
-    curr_x = x
-    curr_y = y
-
-    if len(path) < 1:
-        (curr_x, curr_y) = maze.get_start_pos()
-        pass
+    # we should be able to move as we only call moves if they are valid, but check anyways
+    if maze.can_move_here(x, y):
+        path.append((x, y))
+        maze.move(x, y, 1234)
     else:
-        path.append((curr_x, curr_y))
+        return # basically double check just in case, but if it is problematic, just end...
 
-    if maze.at_end(curr_x, curr_y):
+    # if you are at the end, we are done and just return the path
+    if maze.at_end(x, y):
         return path
 
-    moves = maze.get_possible_moves(curr_x, curr_y)
-    if len(moves) == 0:
-        maze.restore(curr_x, curr_y)
-        return None
 
-    for m in moves:
-        output = maze_recersion(maze, path, m[0], m[1])
-        if output is not None:
-            return output
+
+
+
+
+
+
 
 
 
